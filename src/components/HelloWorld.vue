@@ -1,47 +1,101 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <h2>adsfsadfsad</h2>
+
+    Nome: <input type="text" v-model="nome">
+    <br><br>
+    Ano de nascimento: <input type="number"  @input="calculateIdade()"  v-model="anoDeNascimento" name="" id="">
+    <hr>
+    Meu nome é: {{nome}}
+    <br>
+    Minha Idade é {{idade}}
+    <hr>
+
+    <input type="button" value="Fazer requisição" @click="getEspecialidades">
+  <hr>
+<!-- <p v-for="(especialidade,index) in especialidades" v-bind:key="index" >
+  {{especialidade.nome}}
+</p> -->
+<select  name="" id="" >
+  <option v-for="(especialidade,index) in especialidades" v-bind:key="index" :value="especialidade.nome">{{especialidade.nome}}</option>
+</select>
+<hr>
+<select @change="getCidades()" name="Estados" v-model="selectedEstadoId" id="" >
+  <option  v-for="(estado,index) in estados" v-bind:key="index" :value="estado.id">{{estado.nome}}</option>
+</select>
+<select  name="cidades"  id="" >
+  <option v-for="(cidade,index) in cidades" v-bind:key="index" :value="cidade.nome">{{cidade.nome}}</option>
+</select>
+
+
+  
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: 'HelloWorld',
+  data() {
+  return {
+    nome: '',
+    idade: '0',
+    anoDeNascimento: 0,
+    especialidades:  this.getEspecialidades(),
+    estados: this.getEstados(),
+    cidades:'',
+    selectedEstadoId: 1,
+
+  }},
   props: {
     msg: String
-  }
+  },
+  methods: {
+    getCidades(){
+         axios.get('https://api-teste-front-end-fc.herokuapp.com/cidades',{ 
+           params:{ 
+             estadoId: this.selectedEstadoId 
+             }})
+           .then((res)=>{
+             this.cidades = res.data
+            //  console.log(res.data)
+           })
+           .catch((error)=>{
+             console.log(error)
+           })
+    },
+    getEstados(){
+            axios.get('https://api-teste-front-end-fc.herokuapp.com/estados')
+           .then((res)=>{
+             this.estados = res.data
+            //  console.log(res.data)
+           })
+           .catch((error)=>{
+             console.log(error)
+           })
+    },
+    calculateIdade(){
+      this.idade = 2022 - this.anoDeNascimento
+    },
+     getEspecialidades(){
+      axios.get('https://api-teste-front-end-fc.herokuapp.com/especialidades')
+           .then((res)=>{
+             this.especialidades = res.data
+            //  console.log(res.data)
+           })
+           .catch((error)=>{
+             console.log(error)
+           })
+    }
+  },
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style  scoped>
+
 h3 {
   margin: 40px 0 0;
 }
